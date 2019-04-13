@@ -20,6 +20,11 @@ all:
 
 debug:
 	$(PRE)
+	$(CC) -o $(SELECT) $(CXXFLAGS) -g $(SELECT).cpp
+	$(CC) -o $(BST) $(CXXFLAGS) -g $(BST).cpp
+
+debugEXE:
+	$(PRE)
 	$(CC) -o $(SELECT).exe $(CXXFLAGS) -g $(SELECT).cpp
 	$(CC) -o $(BST).exe $(CXXFLAGS) -g $(BST).cpp
 
