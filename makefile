@@ -1,5 +1,5 @@
 CC := g++ -std=c++11
-CXXFLAGS += -O3 -Wall
+CXXFLAGS += -O0 -Wall
 
 SELECT := selection
 BST := BST

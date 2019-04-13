@@ -10,7 +10,7 @@ int selection(vector<int> &in, int p, int r, int k);
 int partition(vector<int> &in, int p, int r, int pivot);
 void insert_sort(vector<int> &in, int p, int r);
 
-int k;
+int k_in;
 
 int main(int argc, char const *argv[])
 {
@@ -21,13 +21,12 @@ int main(int argc, char const *argv[])
     vector<int> data;
 
     // get k which is the kth small element
-    int k;
     if(argc != 2){
-        cout << "Usage: ./mix_quick_insert_sort\n";
+        cout << "Usage: ./selection k\n";
         return 1;
     }
-    k = atoi(argv[1]);
-    cout << "k: " << k << "\n";
+    k_in = atoi(argv[1]);
+    cout << "k: " << k_in << "\n";
 
     // open files ---------------------------------------------------------------------------------
     fin.open("input");
@@ -58,8 +57,7 @@ int main(int argc, char const *argv[])
     // print(data);
 
     // sorting -------------------------------------------------------------------------------
-    cout << k << "\n";
-    ans = selection( data, 0, data.size()-1, k);
+    ans = selection( data, 0, data.size()-1, k_in);
 
     // print sorted data --------------------------------------------------------------------------
     // cout << "sort: ";
@@ -89,30 +87,43 @@ void print(vector<int> &in)
 }
 
 int selection(vector<int> &in, int p, int r, int k){
-    cout << p << " " << r << " " << k << "\n";
 
+    //if input is not enough 5, then do insert-sort and return median directly
     if( r-p+1 <= 5){
         insert_sort(in, p, r);
+
+        // when using selection() to find median may cause an error of p+k-1 is too large
+        // this is cause by different meaning of k when different using
+        // but using selection() to find median actually don't need return value so we just let it return 0
+        if(p+k-1 >= k_in){
+            return 0;
+        }
         return in[p+k-1];
     }
 
     int tmp;
-    int target = p - 1;
+    int target = p - 1; // index where to put median
 
     for(int i = p; i+5 < r; i += 5){
         insert_sort(in, i, i+4);
 
-        //swap 
+        //swap median to the front
         tmp = in[++target];
         in[target] = in[i+2];
         in[i+2] = tmp;
     }
 
+    // using selection() to find median recursively
+    // median here will all at the head of data list
+    // Be aware of that selection 4'th parameter "k" pass by "mid" will be the actually position where median place
     int mid = p + (target-p) / 2;
-
     tmp = selection(in, p, target, mid);
+
+    // using median as pivot to do partition
     int q = partition(in, p, r, mid);
 
+    // using selection() to reduce (3/10)*n data recursively
+    // Be aware of that selection 4'th parameter "k" pass by "mid" will be the target k to find for answer
     int curr = q - p + 1;
     if (curr == k)
         return in[q];
@@ -126,7 +137,6 @@ int selection(vector<int> &in, int p, int r, int k){
     }
     
 }
-
 
 int partition(vector<int> &in, int p, int r, int pivot)
 {
@@ -158,7 +168,7 @@ int partition(vector<int> &in, int p, int r, int pivot)
 
 void insert_sort(vector<int> &in, int p, int r)
 {
-    for(int i = p; i < r; i++) {
+    for(int i = p+1; i <= r; i++) {
         int key = in[i];
 
         // insert target into queue
