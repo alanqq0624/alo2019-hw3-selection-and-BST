@@ -34,4 +34,4 @@ style: $(SOURCES:.cpp=.astyle-check-stamp)
 .PHONY: clean
 
 clean:
-	rm -rf $(SELECT) $(BST)
+	rm -rf $(SELECT) $(BST) $(SELECT).exe $(BST).exe
